@@ -11,6 +11,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "nconf": "^0.8.4",
-    "selenium-webdriver": "3.0.0-beta-2"
+    "selenium-webdriver": "3.0.0-beta-2",
+    "sleep-promise": "^2.0.0"
   }
 }
