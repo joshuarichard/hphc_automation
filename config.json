@@ -3,6 +3,7 @@
         "username": "jrichard",
         "password": "*"
     },
+    "group": "testorgs",
     "orgs": [
         {
             "name": "UAT Org A",

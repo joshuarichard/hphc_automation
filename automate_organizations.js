@@ -11,7 +11,7 @@ nconf.file({
     file: 'config.json'
 });
 
-var group = 'testorgs';
+var group = nconf.get("group");
 var PARENTS = nconf.get(group);
 var NUM_OF_PARENTS = PARENTS.length;
 
