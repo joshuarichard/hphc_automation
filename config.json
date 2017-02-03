@@ -218,13 +218,6 @@
                 "UAT Org A-1",
                 "UAT Org A-2"
             ]
-        },
-        {
-            "name": "UAT Org B",
-            "acronym": "UOB",
-            "children": [
-                "UAT Org B-1"
-            ]
         }
     ]
 }
