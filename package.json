@@ -1,0 +1,16 @@
+{
+  "name": "hphc",
+  "version": "1.0.0",
+  "description": "automation package",
+  "main": "automate_organizations.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "joshua richard",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "nconf": "^0.8.4",
+    "selenium-webdriver": "3.0.0-beta-2"
+  }
+}

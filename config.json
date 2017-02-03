@@ -1,0 +1,230 @@
+{
+    "credentials": {
+        "username": "jrichard",
+        "password": "*"
+    },
+    "orgs": [
+        {
+            "name": "UAT Org A",
+            "acronym": "UOA",
+            "children": [
+                "UAT Org A-1",
+                "UAT Org A-2",
+                "UAT Org A-3",
+                "UAT Org A-4",
+                "UAT Org A-5",
+                "UAT Org A-6",
+                "UAT Org A-7",
+                "UAT Org A-8",
+                "UAT Org A-9",
+                "UAT Org A-10"
+            ]
+        },
+        {
+            "name": "UAT Org B",
+            "acronym": "UOB",
+            "children": [
+                "UAT Org B-1",
+                "UAT Org B-2",
+                "UAT Org B-3",
+                "UAT Org B-4",
+                "UAT Org B-5",
+                "UAT Org B-6",
+                "UAT Org B-7",
+                "UAT Org B-8",
+                "UAT Org B-9"
+            ]
+        },
+        {
+            "name": "UAT Org C",
+            "acronym": "UOC",
+            "children": [
+                "UAT Org C-1",
+                "UAT Org C-2",
+                "UAT Org C-3",
+                "UAT Org C-4",
+                "UAT Org C-5",
+                "UAT Org C-6",
+                "UAT Org C-7",
+                "UAT Org C-8"
+            ]
+        },
+        {
+            "name": "UAT Org D",
+            "acronym": "UOD",
+            "children": [
+                "UAT Org D-1",
+                "UAT Org D-2",
+                "UAT Org D-3",
+                "UAT Org D-4",
+                "UAT Org D-5",
+                "UAT Org D-6",
+                "UAT Org D-7"
+            ]
+        },
+        {
+            "name": "UAT Org E",
+            "acronym": "UOE",
+            "children": [
+                "UAT Org E-1",
+                "UAT Org E-2",
+                "UAT Org E-3",
+                "UAT Org E-4",
+                "UAT Org E-5",
+                "UAT Org E-6"
+            ]
+        },
+        {
+            "name": "UAT Org F",
+            "acronym": "UOF",
+            "children": [
+                "UAT Org F-1",
+                "UAT Org F-2",
+                "UAT Org F-3",
+                "UAT Org F-4",
+                "UAT Org F-5"
+            ]
+        },
+        {
+            "name": "UAT Org G",
+            "acronym": "UOG",
+            "children": [
+                "UAT Org G-1",
+                "UAT Org G-2",
+                "UAT Org G-3",
+                "UAT Org G-4"
+            ]
+        },
+        {
+            "name": "UAT Org H",
+            "acronym": "UOH",
+            "children": [
+                "UAT Org H-1",
+                "UAT Org H-2",
+                "UAT Org H-3"
+            ]
+        },
+        {
+            "name": "UAT Org I",
+            "acronym": "UOI",
+            "children": [
+                "UAT Org I-1",
+                "UAT Org I-2"
+            ]
+        },
+        {
+            "name": "UAT Org J",
+            "acronym": "UOJ",
+            "children": [
+                "UAT Org J-1"
+            ]
+        },
+        {
+            "name": "UAT Org K",
+            "acronym": "UOK",
+            "children": []
+        },
+        {
+            "name": "UAT Org L",
+            "acronym": "UOL",
+            "children": [
+                "UAT Org L-1",
+                "UAT Org L-2",
+                "UAT Org L-3",
+                "UAT Org L-4",
+                "UAT Org L-5",
+                "UAT Org L-6"
+            ]
+        },
+        {
+            "name": "UAT Org M",
+            "acronym": "UOM",
+            "children": [
+                "UAT Org M-1",
+                "UAT Org M-2",
+                "UAT Org M-3",
+                "UAT Org M-4",
+                "UAT Org M-5"
+            ]
+        },
+        {
+            "name": "UAT Org N",
+            "acronym": "UON",
+            "children": [
+                "UAT Org N-1",
+                "UAT Org N-2",
+                "UAT Org N-3"
+            ]
+        },
+        {
+            "name": "UAT Org O",
+            "acronym": "UOO",
+            "children": [
+                "UAT Org O-1",
+                "UAT Org O-2",
+                "UAT Org O-3"
+            ]
+        },
+        {
+            "name": "UAT Org P",
+            "acronym": "UOP",
+            "children": [
+                "UAT Org P-1",
+                "UAT Org P-2"
+            ]
+        },
+        {
+            "name": "UAT Org Q",
+            "acronym": "UOQ",
+            "children": [
+                "UAT Org Q-1",
+                "UAT Org Q-2"
+            ]
+        },
+        {
+            "name": "UAT Org R",
+            "acronym": "UOR",
+            "children": [
+                "UAT Org R-1",
+                "UAT Org R-2"
+            ]
+        },
+        {
+            "name": "UAT Org S",
+            "acronym": "UOS",
+            "children": []
+        },
+        {
+            "name": "UAT Org T",
+            "acronym": "UOT",
+            "children": []
+        },
+        {
+            "name": "UAT Org U",
+            "acronym": "UOU",
+            "children": []
+        },
+        {
+            "name": "UAT Org V",
+            "acronym": "UOV",
+            "children": []
+        }
+    ],
+    "testorgs" : [
+        {
+            "name": "UAT Org A",
+            "acronym": "UOA",
+            "children": [
+                "UAT Org A-1",
+                "UAT Org A-2"
+            ]
+        },
+        {
+            "name": "UAT Org B",
+            "acronym": "UOB",
+            "children": [
+                "UAT Org B-1"
+            ]
+        }
+    ]
+}
