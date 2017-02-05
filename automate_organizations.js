@@ -158,7 +158,7 @@ function assignSecurityGroup(oName, uid, adminType, callback) {
 }
 
 function setPermissions(oName, uid, perm, callback) {
-    console.log(colors.yellow('INFO: ') + 'Setting permissions for ' + oName + ' and type ' + perm.adminType);
+    console.log(colors.yellow('INFO: ') + 'Setting permissions for ' + oName + ' and type ' + perm.admin_type);
 
     buildDriverAndSignIn(POPMEDNET_URLS.org_profile_url + uid, function(driver) {
         // wait for the organization profile page to load
@@ -192,7 +192,7 @@ function setPermissions(oName, uid, perm, callback) {
                                                           driver.findElements(By.xpath("//*[@id='gOrgSecResults']//tbody//tr"))
                                                                 .then(function(els) {
                                                                     // ...and click the appropriate administrator tr
-                                                                    if (perm.adminType === "DataMart Administrator") {
+                                                                    if (perm.admin_type === "DataMart Administrator") {
                                                                         els[0].click();
                                                                     } else {
                                                                         els[1].click();
@@ -221,7 +221,7 @@ function setPermissions(oName, uid, perm, callback) {
                                                                                               driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
                                                                                                     .then(function() {
                                                                                                         // we're done so log, driver.quit(), and callback
-                                                                                                        console.log(colors.green('INFO: ') + 'Permission set (' + oName + ') with permission ' + perm.adminType + '.');
+                                                                                                        console.log(colors.green('INFO: ') + 'Permission set (' + oName + ') with permission ' + perm.admin_type + '.');
                                                                                                         driver.quit();
                                                                                                         callback();
                                                                                                     });

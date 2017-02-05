@@ -15,7 +15,7 @@
         "org_operations": {
             "permissions": [
                 {
-                    "adminType": "Organization Administrator",
+                    "admin_type": "Organization Administrator",
                     "permissions": [
                         "Edit DataMart",
                         "Edit Organization",
@@ -23,7 +23,7 @@
                     ]
                 },
                 {
-                    "adminType": "DataMart Administrator",
+                    "admin_type": "DataMart Administrator",
                     "permissions": [
                         "Edit DataMart",
                         "Run DataMart Audit Report"
