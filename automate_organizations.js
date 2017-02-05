@@ -80,7 +80,7 @@ function createParent(pName, pAcronym, children, callback) {
     console.log(colors.blue('INFO: ') + 'Creating parent (' + pName + ', ' + pAcronym + ').');
 
     // init webdriver
-    var driver = new webdriver.Builder().forBrowser('chrome').build();
+    var driver = new webdriver.Builder().forBrowser(nconf.get("driver")).build();
 
     // sign in
     driver.get('https://edgednsquerytool.lincolnpeak.com/organizations/details');
@@ -118,7 +118,7 @@ function createChild(cName, pName, pAcronym, callback) {
     console.log(colors.cyan('INFO: ') + 'Creating child (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
 
     // init webdriver
-    var driver = new webdriver.Builder().forBrowser('chrome').build();
+    var driver = new webdriver.Builder().forBrowser(nconf.get("driver")).build();
 
     // sign in
     driver.get('https://edgednsquerytool.lincolnpeak.com/organizations/details');
@@ -146,7 +146,7 @@ function createChild(cName, pName, pAcronym, callback) {
 function assignSecurityGroup(oName, uid, adminType, callback) {
     console.log(colors.yellow('INFO: ') + 'Assigning security group (' + oName + ') the type ' + adminType + '.');
     // init webdriver
-    var driver = new webdriver.Builder().forBrowser('chrome').build();
+    var driver = new webdriver.Builder().forBrowser(nconf.get("driver")).build();
 
     // sign in
     driver.get('https://edgednsquerytool.lincolnpeak.com/securitygroups/details?OwnerID=' + uid);
@@ -174,7 +174,7 @@ function setPermissions(oName, uid, perm, callback) {
     console.log(colors.yellow('INFO: ') + 'Setting permissions for ' + oName + ' and type ' + perm.adminType);
 
     // init webdriver
-    var driver = new webdriver.Builder().forBrowser('chrome').build();
+    var driver = new webdriver.Builder().forBrowser(nconf.get("driver")).build();
 
     // sign in
     driver.get('https://edgednsquerytool.lincolnpeak.com/organizations/details?ID=' + uid);
@@ -273,7 +273,7 @@ function getAndStoreUIds(callback) {
     }
 
     // init webdriver
-    var driver = new webdriver.Builder().forBrowser('chrome').build();
+    var driver = new webdriver.Builder().forBrowser(nconf.get("driver")).build();
 
     // sign in
     driver.get('https://edgednsquerytool.lincolnpeak.com/organizations');

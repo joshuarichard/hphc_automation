@@ -3,6 +3,7 @@
         "username": "jrichard",
         "password": "*"
     },
+    "driver": "chrome",
     "group": "testorgs",
     "orgs": [
         {
