@@ -3,8 +3,22 @@ var nconf  = require('nconf');
 var colors = require('colors/safe');
 var webdriver = require('selenium-webdriver');
 var sleep = require('sleep-promise');
+var bunyan = require('bunyan');
 var By = webdriver.By;
 var until = webdriver.until;
+
+var log = bunyan.createLogger({
+    name: 'automate_organizations',
+    streams: [
+        {
+            level: 'info',
+            stream: process.stdout //,
+            // path: './log/app_info.log',
+            // period: '1d',  // daily rotation
+            // count: 3
+        }
+    ]
+});
 
 nconf.file({
     file: 'config.json'
@@ -16,22 +30,23 @@ var POPMEDNET_URLS = nconf.get('popmednet_urls');
 var ORG_SET = nconf.get('organizations:org_set');
 var ORG_PERMISSIONS = nconf.get('organizations:org_operations:permissions');
 var ORG_SECURITY_GROUPS = nconf.get('organizations:org_operations:security_groups');
-var PARENTS = nconf.get(ORG_SET);
+var PARENTS = nconf.get('organizations:' + ORG_SET);
 
-console.log('INFO: Starting up...');
+log.info('INFO: Starting up...');
 
 // CREATE ALL ORGANIZATIONS
-console.log(colors.magenta('INFO: ') + 'Beginning organization creation...');
+log.info('Beginning organization creation...');
+
 var parents_created = 0;
 PARENTS.forEach(function(parent, index) {
     // createParent() uses createChild()
     createParent(parent.name, parent.acronym, parent.children, function() {
         parents_created++;
         if (parents_created == PARENTS.length) {
-            console.log(colors.green('INFO: ') + 'Organization creation completed.');
+            log.info('Organization creation completed.');
             // get the uids for every org just created and store in nconf
             getAndStoreUIds(function() {
-                console.log(colors.magenta('INFO: ') + 'Assigning security groups to all organizations...');
+                log.info('Assigning security groups to all organizations...');
 
                 // then assign their security groups
                 var num_of_sgs_assigned = 0;
@@ -43,8 +58,8 @@ PARENTS.forEach(function(parent, index) {
                         assignSecurityGroup(org, uids[org], security_group, function() {
                             num_of_sgs_assigned++;
                             if (num_of_sgs_assigned === orgs.length * ORG_SECURITY_GROUPS.length) {
-                                console.log(colors.green('INFO: ') + 'Security groups assigned.');
-                                console.log(colors.magenta('INFO: ') + 'Assigning permissions for all organizations...');
+                                log.info('Security groups assigned.');
+                                log.info('Assigning permissions for all organizations...');
 
                                 var num_of_perms_set = 0;
                                 orgs.forEach(function(org, index) {
@@ -53,9 +68,9 @@ PARENTS.forEach(function(parent, index) {
                                         setPermissions(org, uids[org], permission, function() {
                                             num_of_perms_set++;
                                             if (num_of_perms_set === orgs.length * ORG_PERMISSIONS.length) {
-                                                console.log(colors.green('INFO: ') + 'Done setting permissions.');
+                                                log.info('Done setting permissions.');
                                                 // NEXT THING GOES HERE...
-                                                console.log(colors.magenta('INFO: ') + 'Complete.');
+                                                log.info('Complete.');
                                             }
                                         });
                                     });
@@ -85,7 +100,7 @@ function buildDriverAndSignIn(url, callback) {
   }
 
 function createParent(pName, pAcronym, children, callback) {
-    console.log(colors.blue('INFO: ') + 'Creating parent (' + pName + ', ' + pAcronym + ').');
+    log.info('Creating parent (' + pName + ', ' + pAcronym + ').');
 
     buildDriverAndSignIn(POPMEDNET_URLS.org_creation_url, function(driver) {
         // fill in form
@@ -97,7 +112,7 @@ function createParent(pName, pAcronym, children, callback) {
                   driver.findElement(By.id('btnSave')).click();
                   driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
                         .then(function() {
-                            console.log(colors.green('INFO: ') + 'Parent created (' + pName + ', ' + pAcronym + ').');
+                            log.info('Parent created (' + pName + ', ' + pAcronym + ').');
                             driver.quit();
 
                             var children_created = 0;
@@ -116,7 +131,7 @@ function createParent(pName, pAcronym, children, callback) {
 
 function createChild(cName, pName, pAcronym, callback) {
     var cAcronym = pAcronym + cName.split('-')[1];
-    console.log(colors.cyan('INFO: ') + 'Creating child (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
+    log.info('Creating child (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
 
     buildDriverAndSignIn(POPMEDNET_URLS.org_creation_url, function(driver) {
         // fill in form
@@ -128,7 +143,7 @@ function createChild(cName, pName, pAcronym, callback) {
                   driver.findElement(By.id('btnSave')).click();
                   driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
                         .then(function() {
-                            console.log(colors.green('INFO: ') + 'Child created (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
+                            log.info('Child created (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
                             driver.quit();
                             callback();
                         });
@@ -137,7 +152,7 @@ function createChild(cName, pName, pAcronym, callback) {
 }
 
 function assignSecurityGroup(oName, uid, adminType, callback) {
-    console.log(colors.yellow('INFO: ') + 'Assigning security group (' + oName + ') the type ' + adminType + '.');
+    log.info('Assigning security group (' + oName + ') the type ' + adminType + '.');
 
     buildDriverAndSignIn(POPMEDNET_URLS.org_security_groups_creation_url + uid, function(driver) {
         driver.wait(function() {
@@ -149,7 +164,7 @@ function assignSecurityGroup(oName, uid, adminType, callback) {
             driver.findElement(By.id('btnSave')).click();
             driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
                   .then(function() {
-                      console.log(colors.green('INFO: ') + 'Security group assigned (' + oName + ') assigned ' + adminType + '.');
+                      log.info('Security group assigned (' + oName + ') assigned ' + adminType + '.');
                       driver.quit();
                       callback();
                   });
@@ -158,7 +173,7 @@ function assignSecurityGroup(oName, uid, adminType, callback) {
 }
 
 function setPermissions(oName, uid, perm, callback) {
-    console.log(colors.yellow('INFO: ') + 'Setting permissions for ' + oName + ' and type ' + perm.admin_type);
+    log.info('Setting permissions for ' + oName + ' and type ' + perm.admin_type);
 
     buildDriverAndSignIn(POPMEDNET_URLS.org_profile_url + uid, function(driver) {
         // wait for the organization profile page to load
@@ -221,7 +236,7 @@ function setPermissions(oName, uid, perm, callback) {
                                                                                               driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
                                                                                                     .then(function() {
                                                                                                         // we're done so log, driver.quit(), and callback
-                                                                                                        console.log(colors.green('INFO: ') + 'Permission set (' + oName + ') with permission ' + perm.admin_type + '.');
+                                                                                                        log.info('Permission set (' + oName + ') with permission ' + perm.admin_type + '.');
                                                                                                         driver.quit();
                                                                                                         callback();
                                                                                                     });
@@ -240,7 +255,7 @@ function setPermissions(oName, uid, perm, callback) {
 }
 
 function getAndStoreUIds(callback) {
-    console.log(colors.magenta('INFO: ') + 'Getting UIDs for all orgs...');
+    log.info('Getting UIDs for all orgs...');
     var orglist = {};
     var total_num_of_orgs = 0;
     for (var a = 0; a < PARENTS.length; a++) {
@@ -272,7 +287,7 @@ function getAndStoreUIds(callback) {
                         nconf.set('organizations:' + ORG_SET + '_uids', orglist);
                         nconf.set('organizations:' + ORG_SET + '_orgs', orgs);
                         driver.quit();
-                        console.log(colors.green('INFO: ') + 'Got all UIDs.');
+                        log.info('Got all UIDs.');
                         callback();
                     }
                 });
