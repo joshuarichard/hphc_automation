@@ -1,6 +1,5 @@
 var fs = require('fs');
 var nconf  = require('nconf');
-var colors = require('colors/safe');
 var webdriver = require('selenium-webdriver');
 var sleep = require('sleep-promise');
 var bunyan = require('bunyan');
