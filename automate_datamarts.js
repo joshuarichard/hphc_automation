@@ -49,8 +49,6 @@ for (var a = 0; a < PARENTS.length; a++) {
     parent[PARENTS[a].name  ] = PARENTS[a].acronym;
     org_acro_dict.push(parent);
     for (var b = 0; b < PARENTS[a].children.length; b++) {
-        //var acro = PARENTS[a].acronym + PARENTS[a].children[b].split('-')[1];
-        //var cName = PARENTS[a][b];
         var child = {};
         child[PARENTS[a].children[b]] = PARENTS[a].acronym + PARENTS[a].children[b].split('-')[1];
         org_acro_dict.push(child);  // what the fuck
@@ -59,10 +57,10 @@ for (var a = 0; a < PARENTS.length; a++) {
 
 nconf.set('organizations:' + ORG_SET + '_orgs', org_acro_dict);
 
-log.info('Starting up...');
+console.log('Starting up...');
 
 // CREATE ALL ORGANIZATIONS
-log.info('Beginning datamart creation...');
+console.log('Beginning datamart creation...');
 
 var num_of_dms_created = 0;
 org_acro_dict.forEach(function(org, index) {
@@ -70,7 +68,7 @@ org_acro_dict.forEach(function(org, index) {
         DM_TYPES.forEach(function(type, index) {
             createDataMart(key, org[key], type, function() {
                 if (num_of_dms_created === org_acro_dict.length * DM_TYPES.length) {
-                    log.info('Datamart creation complete.');
+                    console.log('Datamart creation complete.');
                     // NEXT THING GOES HERE
                 }
             });
@@ -94,7 +92,7 @@ function buildDriverAndSignIn(url, callback) {
 }
 
 function createDataMart(oName, oAcronym, type, callback) {
-    log.info('Creating datamart (' + oName + " " + type + ', ' + oAcronym + ').');
+    console.log('Creating datamart (' + oName + " " + type + ', ' + oAcronym + ').');
 
     if (type === "QE DataMart") {
         oAcronym = oAcronym + "QE";
@@ -111,7 +109,6 @@ function createDataMart(oName, oAcronym, type, callback) {
                   driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//ul[@id='cboAdapter_listbox']//li[@role='option' and text()='PCORnet CDM']")));
                   driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//a[@class='k-link' and text()='Installed Models']")));
                   driver.wait(function() { return driver.findElement(By.id('btnInstallModel')).isDisplayed(); }, 5000)
-                        .then(sleep(10000))
                         .then(function() {
                             driver.findElement(By.id('btnInstallModel')).click();
                             driver.findElement(By.id('00bf515f-6539-405b-a617-ca9f8aa12970')).click();
@@ -119,7 +116,7 @@ function createDataMart(oName, oAcronym, type, callback) {
                                   .then(function() {
                                       driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
                                             .then(function() {
-                                                log.info('Datamart created (' + oName + " " + type + ', ' + oAcronym + ').');
+                                                console.log('Datamart created (' + oName + " " + type + ', ' + oAcronym + ').');
                                                 driver.quit();
                                                 callback();
                                             });
