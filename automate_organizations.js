@@ -7,7 +7,7 @@ var By = webdriver.By;
 var until = webdriver.until;
 
 var log = bunyan.createLogger({
-    name: 'automate_organizations',
+    name: 'auto_orgs',
     streams: [
         {
             level: 'info',
@@ -31,7 +31,7 @@ var ORG_PERMISSIONS = nconf.get('organizations:org_operations:permissions');
 var ORG_SECURITY_GROUPS = nconf.get('organizations:org_operations:security_groups');
 var PARENTS = nconf.get('organizations:' + ORG_SET);
 
-log.info('INFO: Starting up...');
+log.info('Starting up...');
 
 // CREATE ALL ORGANIZATIONS
 log.info('Beginning organization creation...');
@@ -68,8 +68,7 @@ PARENTS.forEach(function(parent, index) {
                                             num_of_perms_set++;
                                             if (num_of_perms_set === orgs.length * ORG_PERMISSIONS.length) {
                                                 log.info('Done setting permissions.');
-                                                // NEXT THING GOES HERE...
-                                                log.info('Complete.');
+                                                log.info('Organization creation finished and all organizations set up succesfully.');
                                             }
                                         });
                                     });
@@ -96,34 +95,36 @@ function buildDriverAndSignIn(url, callback) {
           .then(function() {
               callback(driver);
           });
-  }
+}
 
 function createParent(pName, pAcronym, children, callback) {
     log.info('Creating parent (' + pName + ', ' + pAcronym + ').');
 
     buildDriverAndSignIn(POPMEDNET_URLS.org_creation_url, function(driver) {
         // fill in form
-        driver.wait(function() {
-            return driver.findElement(By.id('txtName')).isDisplayed();
-        }, 5000).then(function() {
+        driver.wait(function() { return driver.findElement(By.id('btnSave')).isDisplayed(); }, 5000)
+              .then(sleep(1000))
+              .then(function() {
                   driver.findElement(By.id('txtName')).sendKeys(pName);
                   driver.findElement(By.id('txtAcronym')).sendKeys(pAcronym);
-                  driver.findElement(By.id('btnSave')).click();
-                  driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
-                        .then(function() {
-                            log.info('Parent created (' + pName + ', ' + pAcronym + ').');
-                            driver.quit();
+                  driver.findElement(By.id('btnSave')).click().then(function() {
+                    driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
+                          .then(function() {
+                              log.info('Parent created (' + pName + ', ' + pAcronym + ').');
+                              driver.quit();
 
-                            var children_created = 0;
-                            children.forEach(function(child, index) {
-                                createChild(child, pName, pAcronym, function() {
-                                    children_created++;
-                                    if (children_created == children.length) {
-                                        callback();
-                                    }
-                                });
-                            });
-                        });
+                              var children_created = 0;
+                              children.forEach(function(cName, index) {
+                                  createChild(cName, pName, pAcronym, function() {
+                                      children_created++;
+                                      if (children_created == children.length) {
+                                          callback();
+                                      }
+                                  });
+                              });
+                          });
+                  });
+
             });
     });
 }
@@ -139,13 +140,15 @@ function createChild(cName, pName, pAcronym, callback) {
                   driver.findElement(By.id('txtName')).sendKeys(cName);
                   driver.findElement(By.id('txtAcronym')).sendKeys(cAcronym);
                   driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//li[@role='option' and text()='" + pName + "']")));
-                  driver.findElement(By.id('btnSave')).click();
-                  driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
-                        .then(function() {
-                            log.info('Child created (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
-                            driver.quit();
-                            callback();
-                        });
+                  driver.findElement(By.id('btnSave')).click().then(function() {
+                    driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
+                          .then(function() {
+                              log.info('Child created (' + cName + ', ' + cAcronym + ') with parent (' + pName + ', ' + pAcronym + ').');
+                              driver.quit();
+                              callback();
+                          });
+                  });
+
             });
     });
 }
@@ -220,28 +223,30 @@ function setPermissions(oName, uid, perm, callback) {
                                                                           .then(function() {
                                                                               // and click on the organization permissions tab just in case using js executor
                                                                               driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='Organization Permissions']")));
-                                                                              driver.wait(function() { return driver.findElement(By.xpath("//span[text()='Edit DataMart']//..//..//input[@value='allow']")).isDisplayed(); }, 5000).then(function() {
-                                                                                  // then click the allow permissions radio buttons
-                                                                                  var num_of_perms_clicked = 0;
-                                                                                  perm.permissions.forEach(function(p, index) {
-                                                                                      driver.findElement(By.xpath("//span[text()='" + p + "']//..//..//input[@value='allow']")).click().then(function() {
-                                                                                          num_of_perms_clicked++;
-                                                                                          // once we've clicked all of them
-                                                                                          if (num_of_perms_clicked === perm.permissions.length) {
-                                                                                              // then finally click save
-                                                                                              driver.findElement(By.id('btnSave')).click();
+                                                                              driver.wait(function() { return driver.findElement(By.xpath("//span[text()='Edit DataMart']//..//..//input[@value='allow']")).isDisplayed(); }, 5000)
+                                                                                    .then(sleep(1000)) // sleep because sometimes save clicks too soon and the page can't handle it?
+                                                                                    .then(function() {
+                                                                                        // then click the allow permissions radio buttons
+                                                                                        var num_of_perms_clicked = 0;
+                                                                                        perm.permissions.forEach(function(p, index) {
+                                                                                            driver.findElement(By.xpath("//span[text()='" + p + "']//..//..//input[@value='allow']")).click().then(function() {
+                                                                                                num_of_perms_clicked++;
+                                                                                                // once we've clicked all of them
+                                                                                                if (num_of_perms_clicked === perm.permissions.length) {
+                                                                                                    // then finally click save
+                                                                                                    driver.findElement(By.id('btnSave')).click();
 
-                                                                                              // and wait for the page to confirm successful save
-                                                                                              driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
-                                                                                                    .then(function() {
-                                                                                                        // we're done so log, driver.quit(), and callback
-                                                                                                        log.info('Permission set (' + oName + ') with permission ' + perm.admin_type + '.');
-                                                                                                        driver.quit();
-                                                                                                        callback();
-                                                                                                    });
-                                                                                          }
-                                                                                      });
-                                                                                  });
+                                                                                                    // and wait for the page to confirm successful save
+                                                                                                    driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
+                                                                                                          .then(function() {
+                                                                                                              // we're done so log, driver.quit(), and callback
+                                                                                                              log.info('Permission set (' + oName + ') with permission ' + perm.admin_type + '.');
+                                                                                                              driver.quit();
+                                                                                                              callback();
+                                                                                                          });
+                                                                                                }
+                                                                                            });
+                                                                                        });
                                                                               });
                                                                           });
                                                                 });
