@@ -1,4 +1,4 @@
-# hphc_automation
+# HPHC Automation
 Harvard Pilgrim Health Care automation utilities for building a data set for application testing.
 
 ### Setup/Prerequisites
@@ -32,7 +32,10 @@ Configuration is stored in `config.json`. This is where your credentials and the
 Run `$ npm install` in the top most directory of the project.
 
 ### Running
+When running the software, there are two options that are required. Firstly, the `--entity` flag denotes the entity you would like to operate with (currently just organizations and datamarts are supported). Secondly, the `--operation` flag denotes the operation you would like to execute.
+
 Below are the commands that should be used to run this automation software. Cater the command line arguments to which operation you would like to automate. Any other options will not be accepted as valid.
+
 #### Organization
 - Organization creation: `$ node app.js --entity org --operation create`
 - Create organization security groups: `$ node app.js --entity org --operation sgs`
