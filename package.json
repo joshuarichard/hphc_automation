@@ -9,7 +9,7 @@
   "author": "joshua richard",
   "license": "ISC",
   "dependencies": {
-    "bunyan": "^1.8.5",
+    "minimist": "^1.2.0",
     "nconf": "^0.8.4",
     "selenium-webdriver": "3.0.0-beta-2",
     "sleep-promise": "^2.0.0"
