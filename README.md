@@ -1,7 +1,7 @@
 # HPHC Automation
 Harvard Pilgrim Health Care automation utilities for building a data set for application testing.
 
-### Setup/Prerequisites
+### Prerequisites
 Prerequisites for this utility include Node.js and a webdriver of your choice.
 
 1. Install Node.js.
