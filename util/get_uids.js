@@ -3,6 +3,7 @@ var nconf = require('nconf');
 var webdriver = require('selenium-webdriver');
 var sleep = require('sleep-promise');
 var build_driver = require('./build_driver.js');
+var colors = require('colors/safe');
 var By = webdriver.By;
 var until = webdriver.until;
 
@@ -17,7 +18,7 @@ var PARENTS = nconf.get('organizations:' + ORG_SET);
 var exports = module.exports = {};
 
 exports.get_uids = function(callback) {
-    console.log('INFO: Getting UIDs for all orgs...');
+    console.log(colors.magenta('INFO:') + ' Getting UIDs for all orgs...');
     var orglist = {};
     var total_num_of_orgs = 0;
     for (var a = 0; a < PARENTS.length; a++) {
@@ -47,7 +48,7 @@ exports.get_uids = function(callback) {
                     orglist[org] = href.split("=")[1];
                     if (num_of_uids_found === total_num_of_orgs) {
                         driver.quit();
-                        console.log('INFO: Got all UIDs.');
+                        console.log(colors.green('INFO:') + ' Got all UIDs.');
                         callback({
                             "uids": orglist,
                             "orgs": orgs
@@ -56,5 +57,37 @@ exports.get_uids = function(callback) {
                 });
             });
         });
+    });
+}
+
+exports.get_dms_added = function(callback) {
+    console.log(colors.magenta('INFO:') + ' Checking which DataMarts have already been added.');
+
+    build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_edge_project_url, function(driver) {
+        driver.wait(until.elementLocated(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")), 20000)
+              .then(function() {
+                  driver.findElement(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")).click();
+                  driver.findElements(By.xpath("//div[@id='DataMartTable']//tbody//tr//td[@data-bind='text: DataMart']"))
+                        .then(function(els) {
+                            if (els.length === 0) {
+                                driver.quit();
+                                callback([]);
+                            } else {
+                                var dms = [];
+                                var els_iterated = 0;
+                                els.forEach(function(el, index) {
+                                    el.getAttribute('outerText').then(function(text) {
+                                        dms.push(text);
+                                        els_iterated++;
+                                        if (els_iterated === els.length) {
+                                            driver.quit();
+                                            console.log(colors.green('INFO:') + ' Found all DataMarts succesfully.');
+                                            callback(dms);
+                                        }
+                                    });
+                                });
+                            }
+                         });
+               });
     });
 }

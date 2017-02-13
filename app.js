@@ -4,7 +4,17 @@ var create_orgs = require('./orgs/create_orgs.js');
 var create_org_security_groups = require('./orgs/create_org_security_groups.js');
 var set_org_permissions = require('./orgs/set_org_permissions.js');
 var create_dms = require('./datamarts/create_datamarts.js');
+var add_dms_to_project = require('./datamarts/add_datamarts_to_project.js');
 var uids = require('./util/get_uids.js');
+var colors = require('colors/safe');
+
+nconf.file({
+    file: 'config.json'
+});
+
+console.log(colors.magenta('INFO:') + ' Starting up...');
+console.log(colors.magenta('INFO:') + ' Reading from config file... (\'./config.json\')');
+console.log(colors.magenta('INFO:') + ' Setting variables...');
 
 var ORG_PERMISSIONS = nconf.get('organizations:org_operations:permissions');
 var ORG_SECURITY_GROUPS = nconf.get('organizations:org_operations:security_groups');
@@ -12,6 +22,11 @@ var ORG_SET = nconf.get('organizations:org_set');
 var PARENTS = nconf.get('organizations:' + ORG_SET);
 var DM_SET = nconf.get('datamarts:dm_set');
 var DM_TYPES = nconf.get('datamarts:dm_types');
+var DM_PERMISSIONS = nconf.get('datamarts:dm_operations:security_groups');
+
+console.log(colors.magenta('INFO:') + ' ORG_SET is set to ' + ORG_SET);
+console.log(colors.magenta('INFO:') + ' NCONF set all variables.');
+console.log(colors.magenta('INFO:') + ' Parsing arguments...');
 
 if (argv.entity === "org" && argv.operation === "create") {
     console.log('INFO: Beginning organization creation...');
@@ -84,12 +99,37 @@ if (argv.entity === "org" && argv.operation === "create") {
         for (var key in org) {
             DM_TYPES.forEach(function(type, index) {
                 create_dms.createDataMart(key, org[key], type, function() {
+                    num_of_dms_created++;
                     if (num_of_dms_created === org_acro_dict.length * DM_TYPES.length) {
                         console.log('Datamart creation complete.');
                     }
                 });
             });
         }
+    });
+} else if (argv.entity === "dms" && argv.operation === "projects") {
+    var dms = [];
+    console.log(colors.magenta('INFO:') + ' Adding all unassigned DataMarts to the project.');
+    uids.get_dms_added(function(dms_already_added) {
+        console.log(colors.magenta('INFO:') + ' About to get all uids and the list of orgs...');
+        uids.get_uids(function(uids) {
+            var orgs = uids['orgs'];
+            for (var i = 0; i < orgs.length; i++) {
+                DM_TYPES.forEach(function(type, index) {
+                    dms.push(orgs[i] + ' ' + type);
+                });
+            }
+
+            var num_of_dms_assigned_to_projects = 0;
+            dms.forEach(function(dm, index) {
+                add_dms_to_project.addDataMartToProject(dm, DM_PERMISSIONS, index, dms_already_added, function() {
+                    num_of_dms_assigned_to_projects++;
+                    if (num_of_dms_assigned_to_projects === dms.length * DM_PERMISSIONS.length) {
+                        console.log(colors.green('INFO:') + ' All Datamarts have been assigned to a project.');
+                    }
+                });
+            });
+        });
     });
 } else {
     console.log('ERROR: Invalid arguments provided.')

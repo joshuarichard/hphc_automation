@@ -12,6 +12,8 @@ nconf.file({
 
 var POPMEDNET_URLS = nconf.get('popmednet_urls');
 
+var exports = module.exports = {};
+
 exports.createDataMart = function(oName, oAcronym, type, callback) {
     console.log('Creating datamart (' + oName + " " + type + ', ' + oAcronym + ').');
 
@@ -22,12 +24,17 @@ exports.createDataMart = function(oName, oAcronym, type, callback) {
     }
 
     build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_creation_url, function(driver) {
-        driver.wait(function() { return driver.findElement(By.id('btnSave')).isDisplayed(); }, 5000)
+        driver.wait(function waitForButton() { return driver.findElement(By.id('btnSave')).isDisplayed(); }, 5000)
               .then(function() {
                   driver.findElement(By.id('txtName')).sendKeys(oName + " " + type);
                   driver.findElement(By.id('txtAcronym')).sendKeys(oAcronym);
                   driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//li[@role='option' and text()='" + oName + "']")));
-                  driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//ul[@id='cboAdapter_listbox']//li[@role='option' and text()='PCORnet CDM']")));
+
+                  // only set the PCORnet CDM thing only if it's a QE DataMart
+                  if (type === "QE DataMart") {
+                      driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//ul[@id='cboAdapter_listbox']//li[@role='option' and text()='PCORnet CDM']")));
+                  }
+
                   driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//a[@class='k-link' and text()='Installed Models']")));
                   driver.wait(function() { return driver.findElement(By.id('btnInstallModel')).isDisplayed(); }, 5000)
                         .then(function() {
@@ -48,4 +55,8 @@ exports.createDataMart = function(oName, oAcronym, type, callback) {
                         });
               });
     });
+}
+
+exports.fixDataMart = function(dm, callback) {
+    build_driver.buildDriverAndSignIn(POPMEDNET_URLS.d)
 }

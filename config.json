@@ -9,17 +9,48 @@
         "org_creation_url": "https://edgednsquerytool.lincolnpeak.com/organizations/details",
         "org_profile_url": "https://edgednsquerytool.lincolnpeak.com/organizations/details?ID=",
         "org_security_groups_creation_url": "https://edgednsquerytool.lincolnpeak.com/securitygroups/details?OwnerID=",
-        "dm_creation_url": "https://edgednsquerytool.lincolnpeak.com/datamarts/details"
+        "dm_creation_url": "https://edgednsquerytool.lincolnpeak.com/datamarts/details",
+        "dm_edge_project_url": "https://edgednsquerytool.lincolnpeak.com/projects/details?ID=d75520c8-b839-4861-9472-a7140114178d"
     },
     "datamarts": {
         "dm_set": "testdms",
         "dm_types": [
             "QE DataMart",
             "Legacy DataMart"
-        ]
+        ],
+        "dm_operations": {
+            "security_groups": [
+                {
+                    "admin_type": "DataMart Administrator",
+                    "permissions": [
+                        "Hold Requests",
+                        "See DataMart Request Queue",
+                        "Skip Response Approval",
+                        "Upload Results",
+                        "Reject Requests"
+                    ]
+                },
+                {
+                    "admin_type": "Organization Administrator",
+                    "permissions": [
+                        "See DataMart Request Queue"
+                    ]
+                },
+                {
+                    "admin_type": "Operations Center/MassDataMartAdministrator",
+                    "permissions": [
+                        "Hold Requests",
+                        "See DataMart Request Queue",
+                        "Skip Response Approval",
+                        "Upload Results",
+                        "Reject Requests"
+                    ]
+                }
+            ]
+        }
     },
     "organizations": {
-        "org_set": "testorgs",
+        "org_set": "orgs",
         "org_operations": {
             "permissions": [
                 {
