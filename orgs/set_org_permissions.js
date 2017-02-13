@@ -10,7 +10,7 @@ nconf.file({
     file: 'config.json'
 });
 
-var POPMEDNET_URLS = nconf.get('popmednet_urls');
+var POPMEDNET_URLS = nconf.get('popmednet_urls:' + nconf.get('server'));
 
 var exports = module.exports = {};
 

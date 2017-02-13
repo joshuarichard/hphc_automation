@@ -24,8 +24,9 @@ var DM_SET = nconf.get('datamarts:dm_set');
 var DM_TYPES = nconf.get('datamarts:dm_types');
 var DM_PERMISSIONS = nconf.get('datamarts:dm_operations:security_groups');
 
-console.log(colors.magenta('INFO:') + ' ORG_SET is set to ' + ORG_SET);
-console.log(colors.magenta('INFO:') + ' NCONF set all variables.');
+console.log(colors.green('INFO:') + ' Working with server \'' + nconf.get('server') + '\'.');
+console.log(colors.green('INFO:') + ' ORG_SET is set to \'' + ORG_SET + '\'.');
+console.log(colors.green('INFO:') + ' NCONF set all variables.');
 console.log(colors.magenta('INFO:') + ' Parsing arguments...');
 
 if (argv.entity === "org" && argv.operation === "create") {
@@ -111,7 +112,7 @@ if (argv.entity === "org" && argv.operation === "create") {
     var dms = [];
     console.log(colors.magenta('INFO:') + ' Adding all unassigned DataMarts to the project.');
     uids.get_dms_added(function(dms_already_added) {
-        console.log(colors.magenta('INFO:') + ' About to get all uids and the list of orgs...');
+        console.log(colors.yellow('INFO:') + ' About to get all uids and the list of orgs...');
         uids.get_uids(function(uids) {
             var orgs = uids['orgs'];
             for (var i = 0; i < orgs.length; i++) {

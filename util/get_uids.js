@@ -11,7 +11,7 @@ nconf.file({
     file: 'config.json'
 });
 
-var POPMEDNET_URLS = nconf.get('popmednet_urls');
+var POPMEDNET_URLS = nconf.get('popmednet_urls:' + nconf.get('server'));
 var ORG_SET = nconf.get('organizations:org_set');
 var PARENTS = nconf.get('organizations:' + ORG_SET);
 
@@ -61,7 +61,7 @@ exports.get_uids = function(callback) {
 }
 
 exports.get_dms_added = function(callback) {
-    console.log(colors.magenta('INFO:') + ' Checking which DataMarts have already been added.');
+    console.log(colors.yellow('INFO:') + ' Checking which DataMarts have already been added.');
 
     build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_edge_project_url, function(driver) {
         driver.wait(until.elementLocated(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")), 20000)
