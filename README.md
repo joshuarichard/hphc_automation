@@ -43,3 +43,4 @@ Below are the commands that should be used to run this automation software. Cate
 
 #### DataMarts
 - DataMart creation: `$ node app.js --entity dms --operation create`
+- Add DataMarts to a project: `$ node app.js --entity dms --operation projects`
