@@ -1,3 +1,9 @@
+/**
+ * add_datamarts_to_project.js
+ *
+ * Module that adds datamarts to the specified project.
+ */
+
 var fs = require('fs');
 var nconf  = require('nconf');
 var webdriver = require('selenium-webdriver');
@@ -15,13 +21,22 @@ var POPMEDNET_URLS = nconf.get('popmednet_urls:' + nconf.get('server'));
 
 var exports = module.exports = {};
 
-exports.addDataMartToProject = function(dName, permissions, dIndex, dms_already_added, callback) {
+/**
+ * Adds the given datamart to the appropriate project.
+ * @param {String} dName - The name for this datamart.
+ * @param {Array.Object} - The permissions to assign for this datamart.
+ * @param {Int} dIndex - The index for this DataMart within the current runtime.
+ * @param {Array.String} dmsAlreadyAdded - The DataMarts that have already been added to this project.
+ *                                       - Used to restart this operation should there be a failure.
+ * @callback {addDataMartToProjectCallback} callback - The callback that resolves this function.
+ */
+exports.addDataMartToProject = function(dName, permissions, dIndex, dmsAlreadyAdded, callback) {
     // example oName = ['UAT', 'Org', 'A-2', 'Legacy', 'DataMart']
     var oName = dName.split(' ');
     oName = oName[0] + ' ' + oName[1] + ' ' + oName[2]; // + ' ' + oName[3];
-    var offset = dIndex + dms_already_added.length;
+    var offset = dIndex + dmsAlreadyAdded.length;
 
-    if (dms_already_added.indexOf(dName) > -1) {
+    if (dmsAlreadyAdded.indexOf(dName) > -1) {
         console.log(colors.green('INFO:') + ' ' + dName + ' has already been added to the project.');
         callback();
     } else {

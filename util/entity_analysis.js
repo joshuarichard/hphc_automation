@@ -1,3 +1,12 @@
+/**
+ * entity_analysis.js
+ *
+ * Module that analyzes existing organizations and datamarts to extract information
+ * from the ui. Uids for organizations are used by the application to build profile urls.
+ * DataMart analysis is done here to identify which have been added to a project for
+ * restarting on failure.
+ */
+
 var fs = require('fs');
 var nconf = require('nconf');
 var webdriver = require('selenium-webdriver');
@@ -17,7 +26,12 @@ var PARENTS = nconf.get('organizations:' + ORG_SET);
 
 var exports = module.exports = {};
 
-exports.get_uids = function(callback) {
+/**
+ * Generates an organization list (parents + children) and gets uids for each one.
+ * @callback {getUids_callback} callback - The callback that works with the uids and org list.
+ * @return {object} {{uids: {org_name: uid}, orgs: [org_name]}}
+ */
+exports.getUids = function(callback) {
     console.log(colors.magenta('INFO:') + ' Getting UIDs for all orgs...');
     var orglist = {};
     var total_num_of_orgs = 0;
@@ -40,27 +54,34 @@ exports.get_uids = function(callback) {
                 }
             }
 
-            orgs.forEach(function(org, index) {
-                driver.wait(function() {
-                    return driver.findElement(By.xpath("//a[text() = '" + org + "']")).getAttribute('href');
-                }).then(function(href) {
-                    num_of_uids_found++;
-                    orglist[org] = href.split("=")[1];
-                    if (num_of_uids_found === total_num_of_orgs) {
-                        driver.quit();
-                        console.log(colors.green('INFO:') + ' Got all UIDs.');
-                        callback({
-                            "uids": orglist,
-                            "orgs": orgs
-                        });
-                    }
+            driver.wait(sleep(1500)).then(function() {
+                orgs.forEach(function(org, index) {
+                    driver.wait(function() {
+                        return driver.findElement(By.xpath("//a[text() = '" + org + "']")).getAttribute('href');
+                    }).then(function(href) {
+                        num_of_uids_found++;
+                        orglist[org] = href.split("=")[1];
+                        if (num_of_uids_found === total_num_of_orgs) {
+                            driver.quit();
+                            console.log(colors.green('INFO:') + ' Got all UIDs.');
+                            callback({
+                                "uids": orglist,
+                                "orgs": orgs
+                            });
+                        }
+                    });
                 });
             });
         });
     });
 }
 
-exports.get_dms_added = function(callback) {
+/**
+ * Gets DataMarts already been added to the main project - only called by datamarts/add_datamarts_to_project.js
+ * @callback {getDmsAdded_callback} callback - The callback that works with the array of datamarts.
+ * @return {Array.String} - DataMarts already added to the project.
+ */
+exports.getDmsAdded = function(callback) {
     console.log(colors.yellow('INFO:') + ' Checking which DataMarts have already been added.');
 
     build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_edge_project_url, function(driver) {

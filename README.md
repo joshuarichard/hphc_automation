@@ -37,10 +37,15 @@ When running the software, there are two options that are required. Firstly, the
 Below are the commands that should be used to run this automation software. Cater the command line arguments to which operation you would like to automate. Any other options will not be accepted as valid.
 
 #### Organization
-- Organization creation: `$ node app.js --entity org --operation create`
-- Create organization security groups: `$ node app.js --entity org --operation sgs`
-- Set organization permissions: `$ node app.js --entity org --operation perms`
+- Organization creation: `$ node app.js --entity orgs --operation create`
+- Create organization security groups: `$ node app.js --entity orgs --operation sgs`
+- Set organization permissions: `$ node app.js --entity orgs --operation perms`
+
+Note: Should any of these crash, create a new org set in the config file with all orgs not yet worked on. Also change organization.org_set in the config file.
 
 #### DataMarts
 - DataMart creation: `$ node app.js --entity dms --operation create`
-- Add DataMarts to a project: `$ node app.js --entity dms --operation projects`
+  - Note: Should this crash, create a new org set in the config file with all orgs not yet worked on. Also change organization.org_set in the config file. DataMarts are built based on the organizations listed in the config file.
+- Add DataMarts to a project: `$ node app.js --entity dms --operation project`
+  - This use case can restart automatically should it fail due to UI errors in POPMEDNET.
+  - Note: Should this crash, simply restart the use case.

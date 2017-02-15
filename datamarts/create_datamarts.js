@@ -1,8 +1,15 @@
+/**
+ * create_datamarts.js
+ *
+ * Module that manages datamart creation.
+ */
+
 var fs = require('fs');
 var nconf  = require('nconf');
 var webdriver = require('selenium-webdriver');
 var sleep = require('sleep-promise');
 var build_driver = require('../util/build_driver.js');
+var colors = require('colors/safe');
 var By = webdriver.By;
 var until = webdriver.until;
 
@@ -11,11 +18,19 @@ nconf.file({
 });
 
 var POPMEDNET_URLS = nconf.get('popmednet_urls:' + nconf.get('server'));
+var SERVER_NAME = nconf.get('server');
 
 var exports = module.exports = {};
 
+/**
+ * Creates a DataMart with the given information.
+ * @param {String} oName - The organization name for this datamart.
+ * @param {String} oAcronym - The organization acronym for this datamart.
+ * @param {String} type - The type for this datamart.
+ * @callback {createDataMartCallback} callback - The callback that resolves this function.
+ */
 exports.createDataMart = function(oName, oAcronym, type, callback) {
-    console.log('Creating datamart (' + oName + " " + type + ', ' + oAcronym + ').');
+    console.log(colors.yellow('INFO:') + ' Creating datamart (' + oName + " " + type + ', ' + oAcronym + ').');
 
     if (type === "QE DataMart") {
         oAcronym = oAcronym + "QE";
@@ -35,18 +50,24 @@ exports.createDataMart = function(oName, oAcronym, type, callback) {
                       driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//ul[@id='cboAdapter_listbox']//li[@role='option' and text()='PCORnet CDM']")));
                   }
 
-                  driver.executeScript("arguments[0].click();", driver.findElement(By.xpath("//a[@class='k-link' and text()='Installed Models']")));
+                  var installed_models_xpath = "";
+                  if (SERVER_NAME === "edge") {
+                      installed_models_xpath = "//a[@class='k-link' and text()='Installed Models']";
+                  } else if (SERVER_NAME === "pmnuat") {
+                      installed_models_xpath = "//span[@class='k-link' and text()='Installed Models']";
+                  }
+                  driver.executeScript("arguments[0].click();", driver.findElement(By.xpath(installed_models_xpath)));
                   driver.wait(function() { return driver.findElement(By.id('btnInstallModel')).isDisplayed(); }, 5000)
                         .then(function() {
                             driver.findElement(By.id('btnInstallModel')).click();
-                            driver.wait(function() { return driver.findElement(By.id('00bf515f-6539-405b-a617-ca9f8aa12970')).isDisplayed(); }, 5000)
+                            driver.wait(until.elementLocated(By.id('00bf515f-6539-405b-a617-ca9f8aa12970')), 5000)
                                   .then(function() {
-                                      driver.findElement(By.id('00bf515f-6539-405b-a617-ca9f8aa12970')).click();
+                                      driver.executeScript("arguments[0].click();", driver.findElement(By.id('00bf515f-6539-405b-a617-ca9f8aa12970')));
                                       driver.wait(until.elementLocated(By.xpath("//td[text()='File Distribution']")))
                                             .then(function() {
-                                                driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 5000)
+                                                driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'k-overlay') and contains(@style, 'display: block')]")), 10000)
                                                       .then(function() {
-                                                          console.log('Datamart created (' + oName + " " + type + ', ' + oAcronym + ').');
+                                                          console.log(colors.green('INFO:') + ' Datamart created (' + oName + " " + type + ', ' + oAcronym + ').');
                                                           driver.quit();
                                                           callback();
                                                       });
@@ -55,8 +76,4 @@ exports.createDataMart = function(oName, oAcronym, type, callback) {
                         });
               });
     });
-}
-
-exports.fixDataMart = function(dm, callback) {
-    build_driver.buildDriverAndSignIn(POPMEDNET_URLS.d)
 }
