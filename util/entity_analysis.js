@@ -84,7 +84,7 @@ exports.getUids = function(callback) {
 exports.getDmsAdded = function(callback) {
     console.log(colors.yellow('INFO:') + ' Checking which DataMarts have already been added.');
 
-    build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_edge_project_url, function(driver) {
+    build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_project_url, function(driver) {
         driver.wait(until.elementLocated(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")), 20000)
               .then(function() {
                   driver.findElement(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")).click();

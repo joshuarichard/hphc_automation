@@ -41,7 +41,7 @@ exports.addDataMartToProject = function(dName, permissions, dIndex, dmsAlreadyAd
         callback();
     } else {
         console.log(colors.yellow('INFO:') + ' Adding ' + dName + ' to the project.');
-        build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_edge_project_url, function(driver) {
+        build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_project_url, function(driver) {
             // wait for the DataMarts tab to load
             driver.wait(until.elementLocated(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")), 20000)
                   .then(function() {
