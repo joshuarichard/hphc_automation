@@ -22,13 +22,16 @@ var SERVER_NAME = nconf.get('server');
 
 var exports = module.exports = {};
 
-/** TODO... UPDATE
- * Creates a parent organization. Child organizations get created after each parent.
- * (steps 1-3 of the wiki)
- * @param {String} pName - The name for this parent organization.
- * @param {String} pAcronym - The acronym for this parent organization.
- * @param {Array.String} children - The child names to create for this parent.
- * @callback {createParentCallback} callback - The callback that resolves this function.
+/**
+ * Creates a user.
+ * @param {String} oName - The name for the organization this user will be associated with.
+ * @param {String} uFirstName - The first name for this user. Naming Convention is that it's oAcronym
+ * @param {String} uLastName - Last name for this user. Naming convention is that it's the type (DMAdmin or OrgAdmin)
+ * @param {String} uEmail - Email for this user. Will always be "support@popmednet.org"
+ * @param {String} uUsername - Username for this user. Should be uFirstname and uLastName concatenated.
+ * @param {String} uPassword - Password for this user. Will always be "Welcome123!"
+ * @param {Array.String} usersAlreadyAdded - Array of users that have already been added to this server. Used for restarting.
+ * @callback {createUserCallback} callback - The callback that resolves this function.
  */
 exports.createUser = function(oName, uFirstName, uLastName, uEmail, uUsername, uPassword, usersAlreadyAdded, callback) {
     if (usersAlreadyAdded.indexOf(uUsername) > -1) {
