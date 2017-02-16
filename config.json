@@ -1,8 +1,8 @@
 {
     "credentials": {
         "username": "jrichard",
-        "password": "*"
-    }
+        "password": "!*"
+    },
     "driver": "chrome",
     "server": "pmnuat",
     "popmednet_urls": {
@@ -12,7 +12,9 @@
                 "org_profile_url": "https://edgednsquerytool.lincolnpeak.com/organizations/details?ID=",
                 "org_security_groups_creation_url": "https://edgednsquerytool.lincolnpeak.com/securitygroups/details?OwnerID=",
                 "dm_creation_url": "https://edgednsquerytool.lincolnpeak.com/datamarts/details",
-                "dm_project_url": "https://edgednsquerytool.lincolnpeak.com/projects/details?ID=d75520c8-b839-4861-9472-a7140114178d"
+                "dm_project_url": "https://edgednsquerytool.lincolnpeak.com/projects/details?ID=d75520c8-b839-4861-9472-a7140114178d",
+                "user_creation_url": "https://edgednsquerytool.lincolnpeak.com/users/details?OrganizationID=7c5b0001-7635-4ac4-8961-a2f9013ffc50",
+                "user_list_url": "https://edgednsquerytool.lincolnpeak.com/users"
             },
             "pmnuat": {
                 "org_list_url": "https://pmnuat.lincolnpeak.com/organizations",
@@ -20,11 +22,18 @@
                 "org_profile_url": "https://pmnuat.lincolnpeak.com/organizations/details?ID=",
                 "org_security_groups_creation_url": "https://pmnuat.lincolnpeak.com/securitygroups/details?OwnerID=",
                 "dm_creation_url": "https://pmnuat.lincolnpeak.com/datamarts/details",
-                "dm_project_url": ""
+                "dm_project_url": "https://pmnuat.lincolnpeak.com/projects/details?ID=11b7906d-379c-4ea0-a050-a71b00e16a67",
+                "user_creation_url": "https://pmnuat.lincolnpeak.com/users/details?OrganizationID=b4140001-0d5a-4b97-bf6c-a22300c8906c",
+                "user_list_url": "https://pmnuat.lincolnpeak.com/users"
             }
     },
+    "users": {
+        "user_types": [
+            "DataMart Administrator",
+            "Organization Administrator"
+        ]
+    },
     "datamarts": {
-        "dm_set": "testdms",
         "dm_types": [
             "QE DataMart",
             "Legacy DataMart"

@@ -15,6 +15,7 @@ var create_org_security_groups = require('./orgs/create_org_security_groups.js')
 var set_org_permissions = require('./orgs/set_org_permissions.js');
 var create_dms = require('./datamarts/create_datamarts.js');
 var add_dms_to_project = require('./datamarts/add_datamarts_to_project.js');
+var create_users = require('./users/create_users.js');
 var analysis = require('./util/entity_analysis.js');
 
 nconf.file({
@@ -30,9 +31,9 @@ var ORG_PERMISSIONS = nconf.get('organizations:org_operations:permissions');
 var ORG_SECURITY_GROUPS = nconf.get('organizations:org_operations:security_groups');
 var ORG_SET = nconf.get('organizations:org_set');
 var PARENTS = nconf.get('organizations:' + ORG_SET);
-var DM_SET = nconf.get('datamarts:dm_set');
 var DM_TYPES = nconf.get('datamarts:dm_types');
 var DM_PERMISSIONS = nconf.get('datamarts:dm_operations:security_groups');
+var USER_TYPES = nconf.get('users:user_types');
 
 console.log(colors.green('INFO:') + ' Working with server \'' + nconf.get('server') + '\'.');
 console.log(colors.green('INFO:') + ' ORG_SET is set to \'' + ORG_SET + '\'.');
@@ -128,7 +129,7 @@ if (argv.entity === "orgs" && argv.operation === "create") {
         }
     });
 /**
- * Assign datamart to the appropriate project.
+ * Assign datamarts to the appropriate project.
  */
 } else if (argv.entity === "dms" && argv.operation === "project") {
     var dms = [];
@@ -150,6 +151,43 @@ if (argv.entity === "orgs" && argv.operation === "create") {
                     if (num_of_dms_assigned_to_projects === dms.length * DM_PERMISSIONS.length) {
                         console.log(colors.green('INFO:') + ' All Datamarts have been assigned to a project.');
                     }
+                });
+            });
+        });
+    });
+/**
+ * Create users.
+ */
+} else if (argv.entity === "users" && argv.operation === "create") {
+    console.log(colors.magenta('INFO:') + ' Creating all users...');
+    var num_of_users_set_for_orgs = 0;
+    analysis.getUsersAdded(function(usersAlreadyAdded) {
+        analysis.getUids(function(uids) {
+            var orgs = uids['orgs'];
+            orgs.forEach(function(org, index) {
+                USER_TYPES.forEach(function(type, index) {
+                    var uFirstName = "UO";
+                    var oNameSplit = org.split(" ");
+
+                    if (oNameSplit[2].split("-").length === 2) {
+                        uFirstName += oNameSplit[2].split("-")[0] + oNameSplit[2].split("-")[1];
+                    } else {
+                        uFirstName += oNameSplit[2];
+                    }
+
+                    var uLastName = "";
+                    if (type === "DataMart Administrator") {
+                        uLastName = "DMAdmin";
+                    } else {
+                        uLastName = "OrgAdmin";
+                    }
+
+                    create_users.createUser(org, uFirstName, uLastName, "support@popmednet.org", uFirstName + uLastName, "Welcome123!", usersAlreadyAdded, function() {
+                        num_of_users_set_for_orgs++;
+                        if (num_of_users_set_for_orgs === orgs.length * USER_TYPES.length) {
+                            console.log(colors.green('INFO:') + ' All users created.');
+                        }
+                    });
                 });
             });
         });

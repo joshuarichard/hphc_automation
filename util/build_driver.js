@@ -9,6 +9,7 @@ var nconf = require('nconf');
 var webdriver = require('selenium-webdriver');
 var By = webdriver.By;
 var until = webdriver.until;
+var sleep = require('sleep-promise')
 
 nconf.file({
     file: 'config.json'
@@ -30,7 +31,7 @@ exports.buildDriverAndSignIn = function(url, callback) {
     var driver = new webdriver.Builder().forBrowser(nconf.get("driver")).build();
 
     // sign in
-    driver.get(url);
+    driver.get(url).then(sleep(1000));
     driver.findElement(By.id('txtUserName')).sendKeys(POPMEDNET_USERNAME);
     driver.findElement(By.id('txtPassword')).sendKeys(POPMEDNET_PASSWORD);
     driver.findElement(By.className('btn btn-primary'))

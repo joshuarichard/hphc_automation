@@ -23,6 +23,7 @@ nconf.file({
 var POPMEDNET_URLS = nconf.get('popmednet_urls:' + nconf.get('server'));
 var ORG_SET = nconf.get('organizations:org_set');
 var PARENTS = nconf.get('organizations:' + ORG_SET);
+var SERVER_NAME = nconf.get('server');
 
 var exports = module.exports = {};
 
@@ -45,7 +46,7 @@ exports.getUids = function(callback) {
     }
 
     build_driver.buildDriverAndSignIn(POPMEDNET_URLS.org_list_url, function(driver) {
-        driver.wait(until.elementLocated(By.linkText(PARENTS[0].name)), 5000).then(function() {
+        driver.wait(until.elementLocated(By.linkText(PARENTS[0].name)), 15000).then(function() {
             var num_of_uids_found = 0;
             var orgs = [];
             for (var key in orglist) {
@@ -85,9 +86,17 @@ exports.getDmsAdded = function(callback) {
     console.log(colors.yellow('INFO:') + ' Checking which DataMarts have already been added.');
 
     build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_project_url, function(driver) {
-        driver.wait(until.elementLocated(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")), 20000)
+        // build the xpath for the DataMarts tab based on which server we're using
+        var dm_tab_xpath = "";
+        if (SERVER_NAME === "edge") {
+            dm_tab_xpath = "//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']";
+        } else if (SERVER_NAME === "pmnuat") {
+            dm_tab_xpath = "//div[@id='tabs']//span[@class='k-link' and text()='DataMarts']";
+        }
+
+        driver.wait(until.elementLocated(By.xpath(dm_tab_xpath)), 20000)
               .then(function() {
-                  driver.findElement(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")).click();
+                  driver.findElement(By.xpath(dm_tab_xpath)).click();
                   driver.findElements(By.xpath("//div[@id='DataMartTable']//tbody//tr//td[@data-bind='text: DataMart']"))
                         .then(function(els) {
                             if (els.length === 0) {
@@ -110,5 +119,31 @@ exports.getDmsAdded = function(callback) {
                             }
                          });
                });
+    });
+}
+
+exports.getUsersAdded = function(callback) {
+    console.log(colors.magenta('INFO:') + ' Getting all users already created...');
+
+    build_driver.buildDriverAndSignIn(POPMEDNET_URLS.user_list_url, function(driver) {
+        driver.wait(until.elementLocated(By.xpath("//tbody//a[text()='zwyner']")))
+              .then(function() {
+                  driver.findElements(By.xpath("//tbody//a"))
+                        .then(function(els) {
+                            var users = [];
+                            var users_iterated = 0;
+                            els.forEach(function(el, index) {
+                                el.getAttribute('outerText').then(function(text) {
+                                    users.push(text);
+                                    users_iterated++;
+                                    if (users_iterated === els.length) {
+                                        console.log(colors.green('INFO:') + ' Got all users already added.');
+                                        driver.quit();
+                                        callback(users);
+                                    }
+                                });
+                            });
+                        });
+              });
     });
 }

@@ -18,6 +18,7 @@ nconf.file({
 });
 
 var POPMEDNET_URLS = nconf.get('popmednet_urls:' + nconf.get('server'));
+var SERVER_NAME = nconf.get('server');
 
 var exports = module.exports = {};
 
@@ -42,11 +43,19 @@ exports.addDataMartToProject = function(dName, permissions, dIndex, dmsAlreadyAd
     } else {
         console.log(colors.yellow('INFO:') + ' Adding ' + dName + ' to the project.');
         build_driver.buildDriverAndSignIn(POPMEDNET_URLS.dm_project_url, function(driver) {
+            // build the xpath for the DataMarts tab based on which server we're using
+            var dm_tab_xpath = "";
+            if (SERVER_NAME === "edge") {
+                dm_tab_xpath = "//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']";
+            } else if (SERVER_NAME === "pmnuat") {
+                dm_tab_xpath = "//div[@id='tabs']//span[@class='k-link' and text()='DataMarts']";
+            }
+
             // wait for the DataMarts tab to load
-            driver.wait(until.elementLocated(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")), 20000)
+            driver.wait(until.elementLocated(By.xpath(dm_tab_xpath)), 20000)
                   .then(function() {
                       // click the Add DataMart button
-                      driver.findElement(By.xpath("//div[@id='tabs']//a[@class='k-link' and text()='DataMarts']")).click();
+                      driver.findElement(By.xpath(dm_tab_xpath)).click();
                       driver.executeScript("arguments[0].click();", driver.findElement(By.id('btnAddDataMart')));
                       driver.wait(function() { return driver.findElement(By.xpath("//a//span[text()='" + dName + "']")).isDisplayed(); }, 20000)
                             .then(function() {
