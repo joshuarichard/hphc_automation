@@ -1,5 +1,4 @@
 .DS_Store
 webdrivers/
 node_modules/
-config.json
 previous_testorgs.json
