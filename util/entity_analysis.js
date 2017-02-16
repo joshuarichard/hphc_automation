@@ -29,7 +29,7 @@ var exports = module.exports = {};
 
 /**
  * Generates an organization list (parents + children) and gets uids for each one.
- * @callback {getUids_callback} callback - The callback that works with the uids and org list.
+ * @callback {getUidsCallback} callback - The callback that works with the uids and org list.
  * @return {object} {{uids: {org_name: uid}, orgs: [org_name]}}
  */
 exports.getUids = function(callback) {
@@ -79,7 +79,7 @@ exports.getUids = function(callback) {
 
 /**
  * Gets DataMarts already been added to the main project - only called by datamarts/add_datamarts_to_project.js
- * @callback {getDmsAdded_callback} callback - The callback that works with the array of datamarts.
+ * @callback {getDmsAddedCallback} callback - The callback that works with the array of datamarts.
  * @return {Array.String} - DataMarts already added to the project.
  */
 exports.getDmsAdded = function(callback) {
@@ -122,6 +122,12 @@ exports.getDmsAdded = function(callback) {
     });
 }
 
+/**
+ * Gets users already been added to the main project - only called by users/create_users.js
+ * Need to manually scroll down to the bottom of the Users list...!
+ * @callback {getUsersAddedCallback} callback - The callback that works with the array of datamarts.
+ * @return {Array.String} - Users already added to the project.
+ */
 exports.getUsersAdded = function(callback) {
     console.log(colors.magenta('INFO:') + ' Getting all users already created...');
 
