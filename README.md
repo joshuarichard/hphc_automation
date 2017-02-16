@@ -49,3 +49,7 @@ Note: Should any of these crash, create a new org set in the config file with al
 - Add DataMarts to a project: `$ node app.js --entity dms --operation project`
   - This use case can restart automatically should it fail due to UI errors in POPMEDNET.
   - Note: Should this crash, simply restart the use case.
+
+#### Users
+- User creation: `$ node app.js --entity users --operation create`
+  - Note: Recovery for this use case can take care of itself, the only thing you'll need to do is scroll down to the bottom of the 

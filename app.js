@@ -161,33 +161,31 @@ if (argv.entity === "orgs" && argv.operation === "create") {
 } else if (argv.entity === "users" && argv.operation === "create") {
     console.log(colors.magenta('INFO:') + ' Creating all users...');
     var num_of_users_set_for_orgs = 0;
-    analysis.getUsersAdded(function(usersAlreadyAdded) {
-        analysis.getUids(function(uids) {
-            var orgs = uids['orgs'];
-            orgs.forEach(function(org, index) {
-                USER_TYPES.forEach(function(type, index) {
-                    var uFirstName = "UO";
-                    var oNameSplit = org.split(" ");
+    analysis.getUids(function(uids) {
+        var orgs = uids['orgs'];
+        orgs.forEach(function(org, index) {
+            USER_TYPES.forEach(function(type, index) {
+                var uFirstName = "UO";
+                var oNameSplit = org.split(" ");
 
-                    if (oNameSplit[2].split("-").length === 2) {
-                        uFirstName += oNameSplit[2].split("-")[0] + oNameSplit[2].split("-")[1];
-                    } else {
-                        uFirstName += oNameSplit[2];
+                if (oNameSplit[2].split("-").length === 2) {
+                    uFirstName += oNameSplit[2].split("-")[0] + oNameSplit[2].split("-")[1];
+                } else {
+                    uFirstName += oNameSplit[2];
+                }
+
+                var uLastName = "";
+                if (type === "DataMart Administrator") {
+                    uLastName = "DMAdmin";
+                } else {
+                    uLastName = "OrgAdmin";
+                }
+
+                create_users.createUser(org, uFirstName, uLastName, "support@popmednet.org", uFirstName + uLastName, "Welcome123!", function() {
+                    num_of_users_set_for_orgs++;
+                    if (num_of_users_set_for_orgs === orgs.length * USER_TYPES.length) {
+                        console.log(colors.green('INFO:') + ' All users created.');
                     }
-
-                    var uLastName = "";
-                    if (type === "DataMart Administrator") {
-                        uLastName = "DMAdmin";
-                    } else {
-                        uLastName = "OrgAdmin";
-                    }
-
-                    create_users.createUser(org, uFirstName, uLastName, "support@popmednet.org", uFirstName + uLastName, "Welcome123!", usersAlreadyAdded, function() {
-                        num_of_users_set_for_orgs++;
-                        if (num_of_users_set_for_orgs === orgs.length * USER_TYPES.length) {
-                            console.log(colors.green('INFO:') + ' All users created.');
-                        }
-                    });
                 });
             });
         });

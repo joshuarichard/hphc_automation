@@ -34,6 +34,8 @@ var exports = module.exports = {};
  */
 exports.getUids = function(callback) {
     console.log(colors.magenta('INFO:') + ' Getting UIDs for all orgs...');
+
+    // build a full org list
     var orglist = {};
     var total_num_of_orgs = 0;
     for (var a = 0; a < PARENTS.length; a++) {
@@ -122,30 +124,76 @@ exports.getDmsAdded = function(callback) {
     });
 }
 
-/**
+/** RETIRED
  * Gets users already been added to the main project - only called by users/create_users.js
  * Need to manually scroll down to the bottom of the Users list...!
  * @callback {getUsersAddedCallback} callback - The callback that works with the array of datamarts.
  * @return {Array.String} - Users already added to the project.
  */
+
+/*
 exports.getUsersAdded = function(callback) {
     console.log(colors.magenta('INFO:') + ' Getting all users already created...');
+
+    // build a full org list
+    var orglist = [];
+    var total_num_of_orgs = 0;
+    for (var a = 0; a < PARENTS.length; a++) {
+        orglist.push(PARENTS[a].name);
+        total_num_of_orgs++;
+        for (var b = 0; b < PARENTS[a].children.length; b++) {
+            total_num_of_orgs++;
+            orglist.push(PARENTS[a].children[b]);
+        }
+    }
+
+    // build usernames for every org
+    var usernamelist = [];
+    for (var j = 0; j < orglist.length; j++) {
+        var uFirstName = "UO";
+        var oNameSplit = orglist[j].split(" ");
+
+        if (oNameSplit[2].split("-").length === 2) {
+            uFirstName += oNameSplit[2].split("-")[0] + oNameSplit[2].split("-")[1];
+        } else {
+            uFirstName += oNameSplit[2];
+        }
+
+        usernamelist.push(uFirstName + "DMAdmin");
+        usernamelist.push(uFirstName + "OrgAdmin");
+    }
 
     build_driver.buildDriverAndSignIn(POPMEDNET_URLS.user_list_url, function(driver) {
         driver.wait(until.elementLocated(By.xpath("//tbody//a[text()='zwyner']")))
               .then(function() {
                   driver.findElements(By.xpath("//tbody//a"))
                         .then(function(els) {
-                            var users = [];
+                            var users = []; // array that stores usernames got from page
                             var users_iterated = 0;
                             els.forEach(function(el, index) {
                                 el.getAttribute('outerText').then(function(text) {
                                     users.push(text);
                                     users_iterated++;
                                     if (users_iterated === els.length) {
+                                        var last_uat = "";
+                                        console.log('users:');
+                                        console.log(users);
+                                        for (var i = users.length - 1; i >= 0; i--) {
+                                            if (users[i].indexOf('UO') > -1) {
+                                                last_uat = users[i];
+                                                break;
+                                            }
+                                        }
+
+                                        console.log('last_uat: ' + last_uat + '.');
+                                        console.log('indexof: ' + usernamelist.indexOf(last_uat));
+                                        usernamelist.slice(0, usernamelist.indexOf(last_uat) + 1);
+
                                         console.log(colors.green('INFO:') + ' Got all users already added.');
                                         driver.quit();
-                                        callback(users);
+                                        console.log('usernamelist:');
+                                        console.log(usernamelist);
+                                        callback(usernamelist);
                                     }
                                 });
                             });
@@ -153,3 +201,4 @@ exports.getUsersAdded = function(callback) {
               });
     });
 }
+*/
